@@ -1,5 +1,6 @@
 ﻿namespace ToDoer.ViewModels
 {
+    using System.Linq;
     using GalaSoft.MvvmLight.Views;
     using System.Collections.Generic;
     using System.Windows.Input;
@@ -7,6 +8,8 @@
     using ToDoer.Common;
     using ToDoer.Interfaces;
     using ToDoer.Models;
+    using ToDoer.Data;
+    using System.Collections.ObjectModel;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -24,9 +27,9 @@
         private INavigationService navigationService;
 
         /// <summary>
-        /// The contexts
+        /// The context repository
         /// </summary>
-        private List<ContextModel> contexts;
+        private IContextRepository contextRepository;
 
         /// <summary>
         /// The context selection changed
@@ -51,12 +54,13 @@
         /// Initializes a new instance of the <see cref="MainViewModel" /> class.
         /// </summary>
         /// <param name="navigationService">The navigation service.</param>
-        public MainViewModel(INavigationService navigationService)
+        /// <param name="contextRepository">The context repository.</param>
+        public MainViewModel(INavigationService navigationService, IContextRepository contextRepository)
         {
             this.navigationService = navigationService;
-            this.Contexts = new List<ContextModel>();
-            var defaultContexts = this.InitDefaultContexts();
-            this.Contexts.AddRange(defaultContexts);
+            this.contextRepository = contextRepository;
+            this.Contexts = new ObservableCollection<ContextModel>();
+            this._initContexts();
         }
 
         #endregion
@@ -69,23 +73,7 @@
         /// <value>
         /// The contexts.
         /// </value>
-        public List<ContextModel> Contexts
-        {
-            get
-            {
-                return this.contexts;
-            }
-            set
-            {
-                if (value == this.contexts)
-                {
-                    return;
-                }
-
-                this.contexts = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public ObservableCollection<ContextModel> Contexts { get; set; }
 
         /// <summary>
         /// Gets the context selection changed.
@@ -151,7 +139,7 @@
 
         #endregion
 
-        #region Methods
+        #region Public Methods
 
         /// <summary>
         /// Activates the specified parameter.
@@ -159,6 +147,19 @@
         /// <param name="parameter">The parameter.</param>
         public void Activate(object parameter)
         {
+            var context = parameter as ContextModel;
+            if (context != null)
+            {
+                var item = this.Contexts.SingleOrDefault(x => x.Id == context.Id);
+                if (item == null)
+                {
+                    this.Contexts.Add(context);
+                }
+                else
+                {
+                    item.Name = context.Name;
+                }
+            }
         }
 
         /// <summary>
@@ -180,6 +181,27 @@
         }
 #endif
 
+        #endregion
+
+        #region Private Methods
+
+        private async void _initContexts()
+        {
+            var defaultContexts = this.InitDefaultContexts();
+            var contexts = await this.contextRepository.GetContexts();
+            // this.Contexts.AddRange(defaultContexts);
+            // this.Contexts.AddRange(contexts);
+            for (int i = 0; i < defaultContexts.Count; i++)
+            {
+                this.Contexts.Add(defaultContexts[i]);
+            }
+
+            for (int i = 0; i < contexts.Count; i++)
+            {
+                this.Contexts.Add(contexts[i]);
+            }
+        }
+
         /// <summary>
         /// Initializes the default contexts.
         /// </summary>
@@ -188,10 +210,10 @@
         {
             var contexts = new List<ContextModel>
             {
-                new ContextModel { Id = 1, Name = Constants.Inbox },
-                new ContextModel { Id = 2, Name = Constants.Today },
-                new ContextModel { Id = 3, Name = Constants.Tomorrow },
-                new ContextModel { Id = 4, Name = Constants.Week }
+                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Inbox },
+                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Today },
+                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Tomorrow },
+                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Week }
             };
 
             return contexts;

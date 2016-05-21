@@ -19,6 +19,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\FocusExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewModelLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ContextRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\IContextRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\ITaskRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Data\TaskRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INavigable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ContextModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\VMBase.cs" />
@@ -68,5 +72,13 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="$(MSBuildThisFileDirectory)Resources\en-US\Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)App_Data\tasks.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)App_Data\contexts.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

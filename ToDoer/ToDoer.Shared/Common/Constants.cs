@@ -10,6 +10,11 @@
         #region Default Contexts
 
         /// <summary>
+        /// The default context identifier
+        /// </summary>
+        public const int DefaultContextId = -1;
+
+        /// <summary>
         /// The inbox
         /// </summary>
         public const string Inbox = "Inbox";
@@ -61,6 +66,20 @@
         /// The add task
         /// </summary>
         public const string AddTask = "AddTask";
+
+        #endregion
+
+        #region AppData
+
+        /// <summary>
+        /// The context data source
+        /// </summary>
+        public const string ContextDataSource = "App_Data\\contexts.json";
+
+        /// <summary>
+        /// The task data source
+        /// </summary>
+        public const string TaskDataSource = "App_Data\\tasks.json";
 
         #endregion
     }

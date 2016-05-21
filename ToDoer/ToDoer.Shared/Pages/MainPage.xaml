@@ -36,7 +36,7 @@
         <CommandBar>
             <AppBarButton x:Name="AddContext" 
                           Icon="Add" 
-                          Label="New">
+                          Label="Context">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:InvokeCommandAction Command="{Binding AddContext}"/>

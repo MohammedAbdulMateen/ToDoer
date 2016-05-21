@@ -4,6 +4,7 @@
     using GalaSoft.MvvmLight.Ioc;
     using GalaSoft.MvvmLight.Views;
     using Microsoft.Practices.ServiceLocation;
+    using ToDoer.Data;
     using ToDoer.Pages;
     using ToDoer.ViewModels;
 
@@ -35,6 +36,8 @@
             SimpleIoc.Default.Register<NewContextViewModel>();
             SimpleIoc.Default.Register<TaskViewModel>();
             SimpleIoc.Default.Register<NewTaskViewModel>();
+            SimpleIoc.Default.Register<IContextRepository, ContextRepository>();
+            SimpleIoc.Default.Register<ITaskRepository, TaskRepository>();
         }
 
         /// <summary>

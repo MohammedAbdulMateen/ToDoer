@@ -1,14 +1,15 @@
 ﻿namespace ToDoer.ViewModels
 {
+    using GalaSoft.MvvmLight.Views;
     using System.Windows.Input;
     using ToDoer.Commands;
     using ToDoer.Common;
     using ToDoer.Interfaces;
     using ToDoer.Models;
+    using ToDoer.Data;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
-    using GalaSoft.MvvmLight.Views;
 
     /// <summary>
     /// The view model for AddContext.xaml
@@ -21,6 +22,11 @@
         /// The navigation service
         /// </summary>
         private INavigationService navigationService;
+
+        /// <summary>
+        /// The context repository
+        /// </summary>
+        private IContextRepository contextRepository;
 
         /// <summary>
         /// The context
@@ -50,9 +56,11 @@
         /// Initializes a new instance of the <see cref="NewContextViewModel" /> class.
         /// </summary>
         /// <param name="navigationService">The navigation service.</param>
-        public NewContextViewModel(INavigationService navigationService)
+        /// <param name="contextRepository">The context repository.</param>
+        public NewContextViewModel(INavigationService navigationService, IContextRepository contextRepository)
         {
             this.navigationService = navigationService;
+            this.contextRepository = contextRepository;
             this.Context = new ContextModel();
         }
 
@@ -185,9 +193,19 @@
         /// Called when [save context].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        public void OnSaveContext(object parameter)
+        public async void OnSaveContext(object parameter)
         {
-            this.navigationService.NavigateTo(Constants.MainPage);
+            ContextModel context = null;
+            if (this.Context.Id == 0)
+            {
+                context = await this.contextRepository.AddContext(this.Context);
+            }
+            else
+            {
+                context = await this.contextRepository.UpdateContext(this.Context);
+            }
+
+            this.navigationService.NavigateTo(Constants.MainPage, context);
         }
 
         /// <summary>
