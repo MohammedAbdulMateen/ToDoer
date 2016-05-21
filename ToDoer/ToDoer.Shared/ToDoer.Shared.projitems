@@ -17,6 +17,7 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Commands\SimpleRelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\FileUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\FocusExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ContextRepository.cs" />

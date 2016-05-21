@@ -97,38 +97,13 @@
         #region Private Methods
 
         /// <summary>
-        /// _gets the storage file for contexts.
-        /// </summary>
-        /// <returns>An instance of StorageFile <see cref="StorageFile.cs"/></returns>
-        private async Task<StorageFile> _getStorageFile()
-        {
-            var storageFolder = Package.Current.InstalledLocation;
-            var storageFile = await storageFolder.GetFileAsync(Constants.ContextDataSource);
-
-            return storageFile;
-        }
-
-        /// <summary>
-        /// _reads the file as text.
-        /// </summary>
-        /// <returns>The file contents as a string</returns>
-        private async Task<string> _readFileAsText()
-        {
-            string contents = null;
-            var storageFile = await _getStorageFile();
-            contents = await FileIO.ReadTextAsync(storageFile);
-
-            return contents;
-        }
-
-        /// <summary>
         /// _gets the contexts.
         /// </summary>
         /// <returns>A list with the element type of ContextModel <see cref="ContextModel.cs"/></returns>
         private async Task<List<ContextModel>> _getContexts()
         {
             List<ContextModel> contexts = null;
-            var contents = await _readFileAsText();
+            var contents = await FileUtility.ReadFileAsTextAsync(Constants.ContextDataSource);
             contexts = JsonConvert.DeserializeObject<List<ContextModel>>(contents);
             if (contexts == null)
             {
@@ -144,9 +119,8 @@
         /// <param name="contexts">The contexts.</param>
         private async void _setContexts(List<ContextModel> contexts)
         {
-            var storageFile = await _getStorageFile();
             var contents = JsonConvert.SerializeObject(contexts);
-            await FileIO.WriteTextAsync(storageFile, contents);
+            await FileUtility.WriteFileAsTextAsync(Constants.ContextDataSource, contents);
         }
 
         #endregion
