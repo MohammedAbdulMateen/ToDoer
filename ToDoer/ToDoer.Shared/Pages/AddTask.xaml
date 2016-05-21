@@ -1,0 +1,87 @@
+﻿<Page
+    x:Class="ToDoer.Pages.AddTask"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ToDoer.Pages"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:common="using:ToDoer.Common"
+    mc:Ignorable="d">
+    <interactivity:Interaction.Behaviors>
+        <core:EventTriggerBehavior EventName="Loaded">
+            <core:InvokeCommandAction Command="{Binding Loaded}"/>
+        </core:EventTriggerBehavior>
+    </interactivity:Interaction.Behaviors>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" 
+          Margin="24,24,24,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="TodoLabel"
+                   Text="Todo"
+                   Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+        <TextBox x:Name="TodoName"
+                 Text="{Binding Task.Todo, Mode=TwoWay}"
+                 common:FocusExtension.IsFocused="{Binding IsTodoNameFocused}"
+                 Grid.Row="1"/>
+
+        <StackPanel Orientation="Horizontal" 
+                    Margin="0,0,0,12"
+                    Grid.Row="2">
+            <TextBlock x:Name="ContextHeadingLabel"
+                       Text="Context -"
+                       Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+            <TextBlock x:Name="ContextLabel"
+                       Text="{Binding Task.Context}"
+                       Style="{StaticResource GroupHeaderTextBlockStyle}" 
+                       Margin="12,0,0,0"/>
+        </StackPanel>
+
+        <TextBlock x:Name="DueDateLabel"
+                   Text="Due Date"
+                   Style="{StaticResource GroupHeaderTextBlockStyle}"
+                   Grid.Row="3"/>
+        <DatePicker x:Name="DueDate"
+                    Date="{Binding Task.DueDate, Mode=TwoWay}"
+                    Grid.Row="4"/>
+        <TimePicker x:Name="DueTime"
+                    Time="{Binding Task.DueTime, Mode=TwoWay}"
+                    Grid.Row="5"/>
+
+        <TextBlock x:Name="ReminderLabel"
+                   Text="Reminder"
+                   Style="{StaticResource GroupHeaderTextBlockStyle}"
+                   Grid.Row="6"/>
+        <DatePicker x:Name="ReminderDate"
+                    Date="{Binding Task.ReminderDate, Mode=TwoWay}"
+                    Grid.Row="7"/>
+        <TimePicker x:Name="ReminderTime"
+                    Time="{Binding Task.ReminderTime, Mode=TwoWay}"
+                    Grid.Row="8"/>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <CommandBar>
+            <AppBarButton Icon="Save" 
+                          Label="Save">
+                <interactivity:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="Click">
+                        <core:InvokeCommandAction Command="{Binding SaveTask}"/>
+                    </core:EventTriggerBehavior>
+                </interactivity:Interaction.Behaviors>
+            </AppBarButton>
+        </CommandBar>
+    </Page.BottomAppBar>
+</Page>
