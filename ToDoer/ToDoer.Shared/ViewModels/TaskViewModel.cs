@@ -1,12 +1,17 @@
 ﻿namespace ToDoer.ViewModels
 {
     using GalaSoft.MvvmLight.Views;
+    using System;
     using System.Collections.Generic;
-    using ToDoer.Common;
+    using System.Collections.ObjectModel;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using System.Windows.Input;
     using ToDoer.Commands;
+    using ToDoer.Common;
+    using ToDoer.Data;
     using ToDoer.Interfaces;
     using ToDoer.Models;
-    using System.Windows.Input;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -24,9 +29,9 @@
         private INavigationService navigationService;
 
         /// <summary>
-        /// The tasks
+        /// The task repository
         /// </summary>
-        private List<TaskModel> tasks;
+        private ITaskRepository taskRepository;
 
         /// <summary>
         /// The current context
@@ -43,12 +48,15 @@
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TaskViewModel"/> class.
+        /// Initializes a new instance of the <see cref="TaskViewModel" /> class.
         /// </summary>
         /// <param name="navigationService">The navigation service.</param>
-        public TaskViewModel(INavigationService navigationService)
+        /// <param name="taskRepository">The task repository.</param>
+        public TaskViewModel(INavigationService navigationService, ITaskRepository taskRepository)
         {
             this.navigationService = navigationService;
+            this.taskRepository = taskRepository;
+            this.Tasks = new ObservableCollection<TaskModel>();
         }
 
         #endregion
@@ -61,23 +69,7 @@
         /// <value>
         /// The tasks.
         /// </value>
-        public List<TaskModel> Tasks
-        {
-            get
-            {
-                return this.tasks;
-            }
-            set
-            {
-                if (value == this.tasks)
-                {
-                    return;
-                }
-
-                this.tasks = value;
-                this.NotifyPropertyChanged();
-            }
-        }
+        public ObservableCollection<TaskModel> Tasks { get; set; }
 
         public ICommand AddTask
         {
@@ -94,15 +86,27 @@
 
         #endregion
 
-        #region Methods
+        #region Public Methods
 
         /// <summary>
         /// Activates the specified parameter.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        public void Activate(object parameter)
+        public async void Activate(object parameter)
         {
             this.currentContext = parameter as ContextModel;
+            if (this.currentContext == null)
+            {
+                var task = parameter as TaskModel;
+                if (task != null)
+                {
+                    this._addOrUpdateTask(task);
+                }
+
+                return;
+            }
+
+            await this._initTasks();
         }
 
         /// <summary>
@@ -121,9 +125,36 @@
         public void BackButtonPressed(BackPressedEventArgs e)
         {
             e.Handled = true;
-            this.navigationService.GoBack();
+            // this.navigationService.GoBack();
+            this.navigationService.NavigateTo(Constants.MainPage);
         }
 #endif
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Initializes the tasks.
+        /// </summary>
+        /// <returns></returns>
+        private async Task _initTasks()
+        {
+            List<TaskModel> tasks = null;
+            if (this.currentContext.Id == Constants.DefaultContextId)
+            {
+                tasks = await this._getTasksAsync(this.currentContext.Name);
+            }
+            else
+            {
+                tasks = await this._getTasksAsync(this.currentContext.Id);
+            }
+
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                this.Tasks.Add(tasks[i]);
+            }
+        }
 
         /// <summary>
         /// Called when [add task].
@@ -132,6 +163,63 @@
         private void OnAddTask(object parameter)
         {
             this.navigationService.NavigateTo(Constants.AddTask, this.currentContext);
+        }
+
+        /// <summary>
+        /// _gets the tasks asynchronous.
+        /// </summary>
+        /// <param name="contextId">The context identifier.</param>
+        /// <returns>
+        /// A list with the element type of TaskModel <see cref="TaskModel.cs" />
+        /// </returns>
+        private async Task<List<TaskModel>> _getTasksAsync(int contextId)
+        {
+            var tasks = await this.taskRepository.GetTasksAsync(contextId);
+
+            return tasks;
+        }
+
+        private async Task<List<TaskModel>> _getTasksAsync(string context)
+        {
+            DateTimeOffset? startDate = null, endDate = null;
+            switch (context)
+            {
+                case Constants.Today:
+                    startDate = DateTimeOffset.Now.Date;
+                    break;
+                case Constants.Tomorrow:
+                    startDate = DateTimeOffset.Now.Date.AddDays(1);
+                    break;
+                case Constants.Week:
+                    startDate = DateTimeOffset.Now.Date;
+                    endDate = DateTimeOffset.Now.Date.AddDays(7);
+                    break;
+            }
+
+            var tasks = await this.taskRepository.GetTasksAsync(startDate, endDate);
+
+            return tasks;
+        }
+
+        /// <summary>
+        /// Add or update task.
+        /// </summary>
+        /// <param name="task">The task.</param>
+        private void _addOrUpdateTask(TaskModel task)
+        {
+            var item = this.Tasks.SingleOrDefault(x => x.Id == task.Id);
+            if (item == null)
+            {
+                this.Tasks.Add(task);
+            }
+            else
+            {
+                item.Todo = task.Todo;
+                item.DueDate = task.DueDate;
+                item.DueTime = task.DueTime;
+                item.ReminderDate = task.ReminderDate;
+                item.ReminderTime = task.ReminderTime;
+            }
         }
 
         #endregion

@@ -198,11 +198,11 @@
             ContextModel context = null;
             if (this.Context.Id == 0)
             {
-                context = await this.contextRepository.AddContext(this.Context);
+                context = await this.contextRepository.AddContextAsync(this.Context);
             }
             else
             {
-                context = await this.contextRepository.UpdateContext(this.Context);
+                context = await this.contextRepository.UpdateContextAsync(this.Context);
             }
 
             this.navigationService.NavigateTo(Constants.MainPage, context);

@@ -10,34 +10,41 @@
     public interface IContextRepository
     {
         /// <summary>
-        /// Gets the contexts.
+        /// Gets the contexts asynchronous.
         /// </summary>
-        /// <returns>A list with the element type of ContextModel <see cref="ContextModel.cs"/></returns>
-        Task<List<ContextModel>> GetContexts();
+        /// <returns>
+        /// A list with the element type of ContextModel <see cref="ContextModel.cs" />
+        /// </returns>
+        Task<List<ContextModel>> GetContextsAsync();
 
         /// <summary>
-        /// Gets the context.
+        /// Gets the context asynchronous.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <returns>An instance of ContextModel <see cref="ContextModel.cs"/></returns>
-        Task<ContextModel> GetContext(int id);
+        /// <returns>
+        /// An instance of ContextModel <see cref="ContextModel.cs" />
+        /// </returns>
+        Task<ContextModel> GetContextAsync(int id);
 
         /// <summary>
-        /// Adds the context.
+        /// Adds the context asynchronous.
         /// </summary>
         /// <param name="context">The context.</param>
-        Task<ContextModel> AddContext(ContextModel context);
+        /// <returns></returns>
+        Task<ContextModel> AddContextAsync(ContextModel context);
 
         /// <summary>
-        /// Updates the context.
+        /// Updates the context asynchronous.
         /// </summary>
         /// <param name="context">The context.</param>
-        Task<ContextModel> UpdateContext(ContextModel context);
+        /// <returns></returns>
+        Task<ContextModel> UpdateContextAsync(ContextModel context);
 
         /// <summary>
-        /// Deletes the context.
+        /// Deletes the context asynchronous.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        void DeleteContext(int id);
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        Task DeleteContextAsync(int id);
     }
 }

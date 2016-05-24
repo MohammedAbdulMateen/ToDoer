@@ -49,5 +49,16 @@
         {
             this.handler(parameter);
         }
+
+        /// <summary>
+        /// Raises the can execute changed.
+        /// </summary>
+        public void RaiseCanExecuteChanged()
+        {
+            if (CanExecuteChanged != null)
+            {
+                CanExecuteChanged(this, EventArgs.Empty);
+            }
+        }
     }
 }

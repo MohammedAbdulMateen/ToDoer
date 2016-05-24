@@ -1,14 +1,11 @@
 ﻿namespace ToDoer.Data
 {
     using Newtonsoft.Json;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
     using ToDoer.Common;
     using ToDoer.Models;
-    using Windows.ApplicationModel;
-    using Windows.Storage;
 
     /// <summary>
     /// The context repository manages data in and out for contexts.
@@ -18,36 +15,41 @@
         #region Methods
 
         /// <summary>
-        /// Gets the contexts.
+        /// Gets the contexts asynchronous.
         /// </summary>
-        /// <returns>A list with the element type of ContextModel <see cref="ContextModel.cs"/></returns>
-        public async Task<List<ContextModel>> GetContexts()
+        /// <returns>
+        /// A list with the element type of ContextModel <see cref="ContextModel.cs" />
+        /// </returns>
+        public async Task<List<ContextModel>> GetContextsAsync()
         {
-            var contexts = await _getContexts();
+            var contexts = await _getContextsAsync();
 
             return contexts;
         }
 
         /// <summary>
-        /// Gets the context.
+        /// Gets the context asynchronous.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        /// <returns>An instance of ContextModel <see cref="ContextModel.cs"/></returns>
-        public async Task<ContextModel> GetContext(int id)
+        /// <returns>
+        /// An instance of ContextModel <see cref="ContextModel.cs" />
+        /// </returns>
+        public async Task<ContextModel> GetContextAsync(int id)
         {
-            var contexts = await _getContexts();
+            var contexts = await _getContextsAsync();
             var context = contexts.Single(x => x.Id == id);
 
             return context;
         }
 
         /// <summary>
-        /// Adds the context.
+        /// Adds the context asynchronous.
         /// </summary>
         /// <param name="context">The context.</param>
-        public async Task<ContextModel> AddContext(ContextModel context)
+        /// <returns></returns>
+        public async Task<ContextModel> AddContextAsync(ContextModel context)
         {
-            var contexts = await _getContexts();
+            var contexts = await _getContextsAsync();
             int id;
             var last = contexts.LastOrDefault();
             if (last == null)
@@ -61,35 +63,37 @@
 
             context.Id = id;
             contexts.Add(context);
-            _setContexts(contexts);
+            await _setContextsAsync(contexts);
 
             return context;
         }
 
         /// <summary>
-        /// Updates the context.
+        /// Updates the context asynchronous.
         /// </summary>
         /// <param name="context">The context.</param>
-        public async Task<ContextModel> UpdateContext(ContextModel context)
+        /// <returns></returns>
+        public async Task<ContextModel> UpdateContextAsync(ContextModel context)
         {
-            var contexts = await _getContexts();
+            var contexts = await _getContextsAsync();
             var sourceContext = contexts.Single(x => x.Id == context.Id);
             sourceContext.Name = context.Name;
-            _setContexts(contexts);
+            await _setContextsAsync(contexts);
 
             return sourceContext;
         }
 
         /// <summary>
-        /// Deletes the context.
+        /// Deletes the context asynchronous.
         /// </summary>
         /// <param name="id">The identifier.</param>
-        public async void DeleteContext(int id)
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        public async Task DeleteContextAsync(int id)
         {
-            var contexts = await _getContexts();
+            var contexts = await _getContextsAsync();
             var context = contexts.Single(x => x.Id == id);
             contexts.Remove(context);
-            _setContexts(contexts);
+            await _setContextsAsync(contexts);
         }
 
         #endregion
@@ -97,10 +101,12 @@
         #region Private Methods
 
         /// <summary>
-        /// _gets the contexts.
+        /// _gets the contexts asynchronous.
         /// </summary>
-        /// <returns>A list with the element type of ContextModel <see cref="ContextModel.cs"/></returns>
-        private async Task<List<ContextModel>> _getContexts()
+        /// <returns>
+        /// A list with the element type of ContextModel <see cref="ContextModel.cs" />
+        /// </returns>
+        private async Task<List<ContextModel>> _getContextsAsync()
         {
             List<ContextModel> contexts = null;
             var contents = await FileUtility.ReadFileAsTextAsync(Constants.ContextDataSource);
@@ -114,10 +120,11 @@
         }
 
         /// <summary>
-        /// _sets the contexts.
+        /// _sets the contexts asynchronous.
         /// </summary>
         /// <param name="contexts">The contexts.</param>
-        private async void _setContexts(List<ContextModel> contexts)
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        private async Task _setContextsAsync(List<ContextModel> contexts)
         {
             var contents = JsonConvert.SerializeObject(contexts);
             await FileUtility.WriteFileAsTextAsync(Constants.ContextDataSource, contents);

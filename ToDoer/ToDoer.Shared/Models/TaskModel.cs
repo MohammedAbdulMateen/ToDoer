@@ -13,6 +13,7 @@
         /// </summary>
         public TaskModel()
         {
+            this.ContextId = Constants.DefaultContextId;
             this.Context = Constants.DefaultContext;
         }
 
@@ -54,7 +55,7 @@
         /// <value>
         /// The due date.
         /// </value>
-        public DateTime? DueDate { get; set; }
+        public DateTimeOffset? DueDate { get; set; }
 
         /// <summary>
         /// Gets or sets the due time.
@@ -70,7 +71,7 @@
         /// <value>
         /// The reminder date.
         /// </value>
-        public DateTime? ReminderDate { get; set; }
+        public DateTimeOffset? ReminderDate { get; set; }
 
         /// <summary>
         /// Gets or sets the reminder time.

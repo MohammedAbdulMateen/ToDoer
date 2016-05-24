@@ -1,11 +1,12 @@
 ﻿namespace ToDoer.ViewModels
 {
     using GalaSoft.MvvmLight.Views;
-    using ToDoer.Common;
-    using ToDoer.Interfaces;
-    using ToDoer.Models;
     using System.Windows.Input;
     using ToDoer.Commands;
+    using ToDoer.Common;
+    using ToDoer.Data;
+    using ToDoer.Interfaces;
+    using ToDoer.Models;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -21,6 +22,11 @@
         /// The navigation service
         /// </summary>
         private INavigationService navigationService;
+
+        /// <summary>
+        /// The task repository
+        /// </summary>
+        private ITaskRepository taskRepository;
 
         /// <summary>
         /// The is todo name focused
@@ -47,12 +53,14 @@
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NewTaskViewModel"/> class.
+        /// Initializes a new instance of the <see cref="NewTaskViewModel" /> class.
         /// </summary>
         /// <param name="navigationService">The navigation service.</param>
-        public NewTaskViewModel(INavigationService navigationService)
+        /// <param name="taskRepository">The task repository.</param>
+        public NewTaskViewModel(INavigationService navigationService, ITaskRepository taskRepository)
         {
             this.navigationService = navigationService;
+            this.taskRepository = taskRepository;
             this.Task = new TaskModel();
         }
 
@@ -157,7 +165,7 @@
         public void Activate(object parameter)
         {
             var contextModel = parameter as ContextModel;
-            if (contextModel != null)
+            if (contextModel != null && contextModel.Id != Constants.DefaultContextId)
             {
                 this.Task.ContextId = contextModel.Id;
                 this.Task.Context = contextModel.Name;
@@ -197,8 +205,20 @@
         /// Called when [save task].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnSaveTask(object parameter)
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        private async void OnSaveTask(object parameter)
         {
+            TaskModel task = null;
+            if (this.Task.Id == 0)
+            {
+                task = await this.taskRepository.AddTaskAsync(this.Task);
+            }
+            else
+            {
+                task = await this.taskRepository.UpdateTaskAsync(this.Task);
+            }
+
+            this.navigationService.NavigateTo(Constants.Task, task);
         }
 
         #endregion

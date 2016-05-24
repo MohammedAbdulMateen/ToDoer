@@ -148,17 +148,19 @@
         public void Activate(object parameter)
         {
             var context = parameter as ContextModel;
-            if (context != null)
+            if (context == null)
             {
-                var item = this.Contexts.SingleOrDefault(x => x.Id == context.Id);
-                if (item == null)
-                {
-                    this.Contexts.Add(context);
-                }
-                else
-                {
-                    item.Name = context.Name;
-                }
+                return;
+            }
+
+            var item = this.Contexts.SingleOrDefault(x => x.Id == context.Id);
+            if (item == null)
+            {
+                this.Contexts.Add(context);
+            }
+            else
+            {
+                item.Name = context.Name;
             }
         }
 
@@ -185,20 +187,17 @@
 
         #region Private Methods
 
+        /// <summary>
+        /// Initializes the contexts.
+        /// </summary>
         private async void _initContexts()
         {
             var defaultContexts = this.InitDefaultContexts();
-            var contexts = await this.contextRepository.GetContexts();
-            // this.Contexts.AddRange(defaultContexts);
-            // this.Contexts.AddRange(contexts);
+            var contexts = await this.contextRepository.GetContextsAsync();
+            defaultContexts.AddRange(contexts);
             for (int i = 0; i < defaultContexts.Count; i++)
             {
                 this.Contexts.Add(defaultContexts[i]);
-            }
-
-            for (int i = 0; i < contexts.Count; i++)
-            {
-                this.Contexts.Add(contexts[i]);
             }
         }
 
