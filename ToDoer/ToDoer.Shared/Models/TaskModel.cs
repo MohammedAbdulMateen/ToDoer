@@ -1,11 +1,13 @@
 ﻿namespace ToDoer.Models
 {
+    using PropertyChanged;
     using System;
     using ToDoer.Common;
 
     /// <summary>
     /// The task model
     /// </summary>
+    [ImplementPropertyChanged]
     public class TaskModel
     {
         /// <summary>
@@ -23,6 +25,7 @@
         /// <value>
         /// The identifier.
         /// </value>
+        [DoNotNotify]
         public int Id { get; set; }
 
         /// <summary>
@@ -31,6 +34,7 @@
         /// <value>
         /// The context identifier.
         /// </value>
+        [DoNotNotify]
         public int ContextId { get; set; }
 
         /// <summary>
@@ -80,5 +84,22 @@
         /// The reminder time.
         /// </value>
         public TimeSpan? ReminderTime { get; set; }
+
+        /// <summary>
+        /// Returns true if ... is valid.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
+        /// </value>
+        [DoNotNotify]
+        public bool IsValid
+        {
+            get
+            {
+                return this.ContextId > 0
+                    && !string.IsNullOrWhiteSpace(this.Context)
+                    && !string.IsNullOrWhiteSpace(this.Todo);
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿namespace ToDoer.ViewModels
 {
+    using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Views;
+    using PropertyChanged;
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
@@ -19,29 +21,29 @@
     /// <summary>
     /// The view model for Task.xaml user control.
     /// </summary>
-    public class TaskViewModel : VMBase, INavigable
+    public class TaskViewModel : ViewModelBase, INavigable
     {
         #region Fields
 
         /// <summary>
-        /// The navigation service
+        /// The _navigation service
         /// </summary>
-        private INavigationService navigationService;
+        private INavigationService _navigationService;
 
         /// <summary>
-        /// The task repository
+        /// The _task repository
         /// </summary>
-        private ITaskRepository taskRepository;
+        private ITaskRepository _taskRepository;
 
         /// <summary>
-        /// The current context
+        /// The _current context
         /// </summary>
-        private ContextModel currentContext;
+        private ContextModel _currentContext;
 
         /// <summary>
-        /// The add task
+        /// The _add task
         /// </summary>
-        private ICommand addTask;
+        private ICommand _addTask;
 
         #endregion
 
@@ -54,8 +56,8 @@
         /// <param name="taskRepository">The task repository.</param>
         public TaskViewModel(INavigationService navigationService, ITaskRepository taskRepository)
         {
-            this.navigationService = navigationService;
-            this.taskRepository = taskRepository;
+            this._navigationService = navigationService;
+            this._taskRepository = taskRepository;
             this.Tasks = new ObservableCollection<TaskModel>();
         }
 
@@ -71,16 +73,23 @@
         /// </value>
         public ObservableCollection<TaskModel> Tasks { get; set; }
 
+        /// <summary>
+        /// Gets the add task.
+        /// </summary>
+        /// <value>
+        /// The add task.
+        /// </value>
+        [DoNotNotify]
         public ICommand AddTask
         {
             get
             {
-                if (this.addTask == null)
+                if (this._addTask == null)
                 {
-                    this.addTask = new SimpleRelayCommand(this.OnAddTask);
+                    this._addTask = new SimpleRelayCommand(this._onAddTask);
                 }
 
-                return this.addTask;
+                return this._addTask;
             }
         }
 
@@ -94,8 +103,8 @@
         /// <param name="parameter">The parameter.</param>
         public async void Activate(object parameter)
         {
-            this.currentContext = parameter as ContextModel;
-            if (this.currentContext == null)
+            this._currentContext = parameter as ContextModel;
+            if (this._currentContext == null)
             {
                 var task = parameter as TaskModel;
                 if (task != null)
@@ -126,7 +135,7 @@
         {
             e.Handled = true;
             // this.navigationService.GoBack();
-            this.navigationService.NavigateTo(Constants.MainPage);
+            this._navigationService.NavigateTo(Constants.MainPage);
         }
 #endif
 
@@ -141,13 +150,13 @@
         private async Task _initTasks()
         {
             List<TaskModel> tasks = null;
-            if (this.currentContext.Id == Constants.DefaultContextId)
+            if (this._currentContext.Id == Constants.DefaultContextId)
             {
-                tasks = await this._getTasksAsync(this.currentContext.Name);
+                tasks = await this._getTasksAsync(this._currentContext.Name);
             }
             else
             {
-                tasks = await this._getTasksAsync(this.currentContext.Id);
+                tasks = await this._getTasksAsync(this._currentContext.Id);
             }
 
             for (int i = 0; i < tasks.Count; i++)
@@ -160,9 +169,9 @@
         /// Called when [add task].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnAddTask(object parameter)
+        private void _onAddTask(object parameter)
         {
-            this.navigationService.NavigateTo(Constants.AddTask, this.currentContext);
+            this._navigationService.NavigateTo(Constants.AddTask, this._currentContext);
         }
 
         /// <summary>
@@ -174,7 +183,7 @@
         /// </returns>
         private async Task<List<TaskModel>> _getTasksAsync(int contextId)
         {
-            var tasks = await this.taskRepository.GetTasksAsync(contextId);
+            var tasks = await this._taskRepository.GetTasksAsync(contextId);
 
             return tasks;
         }
@@ -196,7 +205,7 @@
                     break;
             }
 
-            var tasks = await this.taskRepository.GetTasksAsync(startDate, endDate);
+            var tasks = await this._taskRepository.GetTasksAsync(startDate, endDate);
 
             return tasks;
         }

@@ -1,15 +1,17 @@
 ﻿namespace ToDoer.ViewModels
 {
-    using System.Linq;
+    using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Views;
+    using PropertyChanged;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Linq;
     using System.Windows.Input;
     using ToDoer.Commands;
     using ToDoer.Common;
+    using ToDoer.Data;
     using ToDoer.Interfaces;
     using ToDoer.Models;
-    using ToDoer.Data;
-    using System.Collections.ObjectModel;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -17,34 +19,34 @@
     /// <summary>
     /// The view model for MainPage.xaml.
     /// </summary>
-    public class MainViewModel : VMBase, INavigable
+    public class MainViewModel : ViewModelBase, INavigable
     {
         #region Fields
 
         /// <summary>
-        /// The navigation service
+        /// The _navigation service
         /// </summary>
-        private INavigationService navigationService;
+        private INavigationService _navigationService;
 
         /// <summary>
-        /// The context repository
+        /// The _context repository
         /// </summary>
-        private IContextRepository contextRepository;
+        private IContextRepository _contextRepository;
 
         /// <summary>
-        /// The context selection changed
+        /// The _context selection changed
         /// </summary>
-        private ICommand contextSelectionChanged;
+        private ICommand _contextSelectionChanged;
 
         /// <summary>
-        /// The add context
+        /// The _add context
         /// </summary>
-        private ICommand addContext;
+        private ICommand _addContext;
 
         /// <summary>
-        /// The selected context
+        /// The _selected context
         /// </summary>
-        private ContextModel selectedContext;
+        private ContextModel _selectedContext;
 
         #endregion
 
@@ -57,8 +59,8 @@
         /// <param name="contextRepository">The context repository.</param>
         public MainViewModel(INavigationService navigationService, IContextRepository contextRepository)
         {
-            this.navigationService = navigationService;
-            this.contextRepository = contextRepository;
+            this._navigationService = navigationService;
+            this._contextRepository = contextRepository;
             this.Contexts = new ObservableCollection<ContextModel>();
             this._initContexts();
         }
@@ -81,16 +83,17 @@
         /// <value>
         /// The context selection changed.
         /// </value>
+        [DoNotNotify]
         public ICommand ContextSelectionChanged
         {
             get
             {
-                if (this.contextSelectionChanged == null)
+                if (this._contextSelectionChanged == null)
                 {
-                    this.contextSelectionChanged = new SimpleRelayCommand(this.OnContextSelectionChanged);
+                    this._contextSelectionChanged = new SimpleRelayCommand(this._onContextSelectionChanged);
                 }
 
-                return this.contextSelectionChanged;
+                return this._contextSelectionChanged;
             }
         }
 
@@ -100,16 +103,17 @@
         /// <value>
         /// The add context.
         /// </value>
+        [DoNotNotify]
         public ICommand AddContext
         {
             get
             {
-                if (this.addContext == null)
+                if (this._addContext == null)
                 {
-                    this.addContext = new SimpleRelayCommand(this.OnAddContext);
+                    this._addContext = new SimpleRelayCommand(this._onAddContext);
                 }
 
-                return this.addContext;
+                return this._addContext;
             }
         }
 
@@ -123,17 +127,11 @@
         {
             get
             {
-                return this.selectedContext;
+                return this._selectedContext;
             }
             set
             {
-                if (value == this.selectedContext)
-                {
-                    return;
-                }
-
-                this.selectedContext = value;
-                this.NotifyPropertyChanged();
+                this.Set(ref this._selectedContext, value);
             }
         }
 
@@ -192,8 +190,8 @@
         /// </summary>
         private async void _initContexts()
         {
-            var defaultContexts = this.InitDefaultContexts();
-            var contexts = await this.contextRepository.GetContextsAsync();
+            var defaultContexts = this._initDefaultContexts();
+            var contexts = await this._contextRepository.GetContextsAsync();
             defaultContexts.AddRange(contexts);
             for (int i = 0; i < defaultContexts.Count; i++)
             {
@@ -205,14 +203,18 @@
         /// Initializes the default contexts.
         /// </summary>
         /// <returns></returns>
-        private List<ContextModel> InitDefaultContexts()
+        private List<ContextModel> _initDefaultContexts()
         {
+            var inbox = LocalizationService.GetLocalizedMessage(Constants.Inbox);
+            var today = LocalizationService.GetLocalizedMessage(Constants.Today);
+            var tomorrow = LocalizationService.GetLocalizedMessage(Constants.Tomorrow);
+            var week = LocalizationService.GetLocalizedMessage(Constants.Week);
             var contexts = new List<ContextModel>
             {
-                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Inbox },
-                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Today },
-                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Tomorrow },
-                new ContextModel { Id = Constants.DefaultContextId, Name = Constants.Week }
+                new ContextModel { Id = Constants.DefaultContextId, Name = inbox },
+                new ContextModel { Id = Constants.DefaultContextId, Name = today },
+                new ContextModel { Id = Constants.DefaultContextId, Name = tomorrow },
+                new ContextModel { Id = Constants.DefaultContextId, Name = week }
             };
 
             return contexts;
@@ -222,14 +224,14 @@
         /// Called when [context selection changed].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnContextSelectionChanged(object parameter)
+        private void _onContextSelectionChanged(object parameter)
         {
             if (this.SelectedContext == null)
             {
                 return;
             }
 
-            this.navigationService.NavigateTo(Constants.Task, this.SelectedContext);
+            this._navigationService.NavigateTo(Constants.Task, this.SelectedContext);
             this.SelectedContext = null;
         }
 
@@ -237,9 +239,9 @@
         /// Called when [add context].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnAddContext(object parameter)
+        private void _onAddContext(object parameter)
         {
-            this.navigationService.NavigateTo(Constants.AddContext);
+            this._navigationService.NavigateTo(Constants.AddContext);
         }
 
         #endregion

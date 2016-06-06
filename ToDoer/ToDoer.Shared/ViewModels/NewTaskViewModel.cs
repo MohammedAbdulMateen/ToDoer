@@ -1,6 +1,8 @@
 ﻿namespace ToDoer.ViewModels
 {
+    using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Views;
+    using PropertyChanged;
     using System.Windows.Input;
     using ToDoer.Commands;
     using ToDoer.Common;
@@ -14,39 +16,39 @@
     /// <summary>
     /// The view model for Todo.xaml
     /// </summary>
-    public class NewTaskViewModel : VMBase, INavigable
+    public class NewTaskViewModel : ViewModelBase, INavigable
     {
         #region Fields
 
         /// <summary>
-        /// The navigation service
+        /// The _navigation service
         /// </summary>
-        private INavigationService navigationService;
+        private INavigationService _navigationService;
 
         /// <summary>
-        /// The task repository
+        /// The _task repository
         /// </summary>
-        private ITaskRepository taskRepository;
+        private ITaskRepository _taskRepository;
 
         /// <summary>
-        /// The is todo name focused
+        /// The _is todo name focused
         /// </summary>
-        private bool isTodoNameFocused;
+        private bool _isTodoNameFocused;
 
         /// <summary>
-        /// The task
+        /// The _task
         /// </summary>
-        private TaskModel task;
+        private TaskModel _task;
 
         /// <summary>
-        /// The loaded
+        /// The _loaded
         /// </summary>
-        private ICommand loaded;
+        private ICommand _loaded;
 
         /// <summary>
-        /// The save task
+        /// The _save task
         /// </summary>
-        private ICommand saveTask;
+        private ICommand _saveTask;
 
         #endregion
 
@@ -59,8 +61,8 @@
         /// <param name="taskRepository">The task repository.</param>
         public NewTaskViewModel(INavigationService navigationService, ITaskRepository taskRepository)
         {
-            this.navigationService = navigationService;
-            this.taskRepository = taskRepository;
+            this._navigationService = navigationService;
+            this._taskRepository = taskRepository;
             this.Task = new TaskModel();
         }
 
@@ -78,17 +80,11 @@
         {
             get
             {
-                return this.isTodoNameFocused;
+                return this._isTodoNameFocused;
             }
             set
             {
-                if (value == this.isTodoNameFocused)
-                {
-                    return;
-                }
-
-                this.isTodoNameFocused = value;
-                this.NotifyPropertyChanged();
+                this.Set(ref this._isTodoNameFocused, value);
             }
         }
 
@@ -102,17 +98,11 @@
         {
             get
             {
-                return this.task;
+                return this._task;
             }
             set
             {
-                if (value == this.task)
-                {
-                    return;
-                }
-
-                this.task = value;
-                this.NotifyPropertyChanged();
+                this.Set(ref this._task, value);
             }
         }
 
@@ -122,16 +112,17 @@
         /// <value>
         /// The loaded.
         /// </value>
+        [DoNotNotify]
         public ICommand Loaded
         {
             get
             {
-                if (this.loaded == null)
+                if (this._loaded == null)
                 {
-                    this.loaded = new SimpleRelayCommand(this.OnLoaded);
+                    this._loaded = new SimpleRelayCommand(this._onLoaded);
                 }
 
-                return this.loaded;
+                return this._loaded;
             }
         }
 
@@ -141,16 +132,17 @@
         /// <value>
         /// The save task.
         /// </value>
+        [DoNotNotify]
         public ICommand SaveTask
         {
             get
             {
-                if (this.saveTask == null)
+                if (this._saveTask == null)
                 {
-                    this.saveTask = new SimpleRelayCommand(this.OnSaveTask);
+                    this._saveTask = new SimpleRelayCommand(this._onSaveTask);
                 }
 
-                return this.saveTask;
+                return this._saveTask;
             }
         }
 
@@ -188,15 +180,19 @@
         public void BackButtonPressed(BackPressedEventArgs e)
         {
             e.Handled = true;
-            this.navigationService.GoBack();
+            this._navigationService.GoBack();
         }
 #endif
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Called when [loaded].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnLoaded(object parameter)
+        private void _onLoaded(object parameter)
         {
             this.IsTodoNameFocused = true;
         }
@@ -206,19 +202,32 @@
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
-        private async void OnSaveTask(object parameter)
+        private async void _onSaveTask(object parameter)
         {
-            TaskModel task = null;
-            if (this.Task.Id == 0)
+            if (this.Task.IsValid)
             {
-                task = await this.taskRepository.AddTaskAsync(this.Task);
-            }
-            else
-            {
-                task = await this.taskRepository.UpdateTaskAsync(this.Task);
-            }
+                TaskModel task = null;
+                if (this.Task.Id == 0)
+                {
+                    task = await this._taskRepository.AddTaskAsync(this.Task);
+                }
+                else
+                {
+                    task = await this._taskRepository.UpdateTaskAsync(this.Task);
+                }
 
-            this.navigationService.NavigateTo(Constants.Task, task);
+                this._resetTask();
+                this._navigationService.NavigateTo(Constants.Task, task);
+            }
+        }
+
+        private void _resetTask()
+        {
+            this.Task.Todo = null;
+            this.Task.DueDate = null;
+            this.Task.DueTime = null;
+            this.Task.ReminderDate = null;
+            this._task.ReminderTime = null;
         }
 
         #endregion

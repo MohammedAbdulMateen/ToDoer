@@ -7,6 +7,8 @@
     using ToDoer.Interfaces;
     using ToDoer.Models;
     using ToDoer.Data;
+    using GalaSoft.MvvmLight;
+    using PropertyChanged;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -14,39 +16,39 @@
     /// <summary>
     /// The view model for AddContext.xaml
     /// </summary>
-    public class NewContextViewModel : VMBase, INavigable
+    public class NewContextViewModel : ViewModelBase, INavigable
     {
         #region Fields
 
         /// <summary>
-        /// The navigation service
+        /// The _navigation service
         /// </summary>
-        private INavigationService navigationService;
+        private INavigationService _navigationService;
 
         /// <summary>
-        /// The context repository
+        /// The _context repository
         /// </summary>
-        private IContextRepository contextRepository;
+        private IContextRepository _contextRepository;
 
         /// <summary>
-        /// The context
+        /// The _context
         /// </summary>
-        private ContextModel context;
+        private ContextModel _context;
 
         /// <summary>
-        /// The is context name focused
+        /// The _is context name focused
         /// </summary>
-        private bool isContextNameFocused;
+        private bool _isContextNameFocused;
 
         /// <summary>
-        /// The save context
+        /// The _save context
         /// </summary>
-        private ICommand saveContext;
+        private ICommand _saveContext;
 
         /// <summary>
-        /// The loaded
+        /// The _loaded
         /// </summary>
-        private ICommand loaded;
+        private ICommand _loaded;
 
         #endregion
 
@@ -59,8 +61,8 @@
         /// <param name="contextRepository">The context repository.</param>
         public NewContextViewModel(INavigationService navigationService, IContextRepository contextRepository)
         {
-            this.navigationService = navigationService;
-            this.contextRepository = contextRepository;
+            this._navigationService = navigationService;
+            this._contextRepository = contextRepository;
             this.Context = new ContextModel();
         }
 
@@ -78,17 +80,11 @@
         {
             get
             {
-                return this.context;
+                return this._context;
             }
             set
             {
-                if (value == this.context)
-                {
-                    return;
-                }
-
-                this.context = value;
-                this.NotifyPropertyChanged();
+                this.Set(ref this._context, value);
             }
         }
 
@@ -102,17 +98,11 @@
         {
             get
             {
-                return this.isContextNameFocused;
+                return this._isContextNameFocused;
             }
             set
             {
-                if (value == this.isContextNameFocused)
-                {
-                    return;
-                }
-
-                this.isContextNameFocused = value;
-                this.NotifyPropertyChanged();
+                this.Set(ref this._isContextNameFocused, value);
             }
         }
 
@@ -122,16 +112,17 @@
         /// <value>
         /// The save context.
         /// </value>
+        [DoNotNotify]
         public ICommand SaveContext
         {
             get
             {
-                if (this.saveContext == null)
+                if (this._saveContext == null)
                 {
-                    this.saveContext = new SimpleRelayCommand(this.OnSaveContext);
+                    this._saveContext = new SimpleRelayCommand(this.OnSaveContext);
                 }
 
-                return this.saveContext;
+                return this._saveContext;
             }
         }
 
@@ -141,22 +132,23 @@
         /// <value>
         /// The loaded.
         /// </value>
+        [DoNotNotify]
         public ICommand Loaded
         {
             get
             {
-                if (this.loaded == null)
+                if (this._loaded == null)
                 {
-                    this.loaded = new SimpleRelayCommand(this.OnLoaded);
+                    this._loaded = new SimpleRelayCommand(this._onLoaded);
                 }
 
-                return this.loaded;
+                return this._loaded;
             }
         }
 
         #endregion
 
-        #region Methods
+        #region Public Methods
 
         /// <summary>
         /// Activates the specified parameter.
@@ -185,7 +177,7 @@
         public void BackButtonPressed(BackPressedEventArgs e)
         {
             e.Handled = true;
-            this.navigationService.GoBack();
+            this._navigationService.GoBack();
         }
 #endif
 
@@ -195,24 +187,31 @@
         /// <param name="parameter">The parameter.</param>
         public async void OnSaveContext(object parameter)
         {
-            ContextModel context = null;
-            if (this.Context.Id == 0)
+            if (this.Context.IsValid)
             {
-                context = await this.contextRepository.AddContextAsync(this.Context);
-            }
-            else
-            {
-                context = await this.contextRepository.UpdateContextAsync(this.Context);
-            }
+                ContextModel context = null;
+                if (this.Context.Id == 0)
+                {
+                    context = await this._contextRepository.AddContextAsync(this.Context);
+                }
+                else
+                {
+                    context = await this._contextRepository.UpdateContextAsync(this.Context);
+                }
 
-            this.navigationService.NavigateTo(Constants.MainPage, context);
+                this._navigationService.NavigateTo(Constants.MainPage, context);
+            }
         }
+
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Called when [loaded].
         /// </summary>
         /// <param name="parameter">The parameter.</param>
-        private void OnLoaded(object parameter)
+        private void _onLoaded(object parameter)
         {
             this.IsContextNameFocused = true;
         }

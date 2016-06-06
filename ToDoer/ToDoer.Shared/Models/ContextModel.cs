@@ -1,8 +1,11 @@
 ﻿namespace ToDoer.Models
 {
+    using PropertyChanged;
+
     /// <summary>
     /// The context model.
     /// </summary>
+    [ImplementPropertyChanged]
     public class ContextModel
     {
         /// <summary>
@@ -11,6 +14,7 @@
         /// <value>
         /// The identifier.
         /// </value>
+        [DoNotNotify]
         public int Id { get; set; }
 
         /// <summary>
@@ -20,5 +24,20 @@
         /// The name.
         /// </value>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Returns true if ... is valid.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
+        /// </value>
+        [DoNotNotify]
+        public bool IsValid
+        {
+            get
+            {
+                return !string.IsNullOrWhiteSpace(this.Name);
+            }
+        }
     }
 }
