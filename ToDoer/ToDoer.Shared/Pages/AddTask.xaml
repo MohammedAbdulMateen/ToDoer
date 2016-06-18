@@ -33,7 +33,7 @@
                    Text="Todo"
                    Style="{StaticResource GroupHeaderTextBlockStyle}"/>
         <TextBox x:Name="TodoName"
-                 Text="{Binding Task.Todo, Mode=TwoWay}"
+                 Text="{Binding Task.Todo,Mode=TwoWay}"
                  common:FocusExtension.IsFocused="{Binding IsTodoNameFocused}"
                  Grid.Row="1"/>
 
@@ -54,10 +54,10 @@
                    Style="{StaticResource GroupHeaderTextBlockStyle}"
                    Grid.Row="3"/>
         <DatePicker x:Name="DueDate"
-                    Date="{Binding Task.DueDate, Mode=TwoWay}"
+                    Date="{Binding Task.DueDate}"
                     Grid.Row="4"/>
         <TimePicker x:Name="DueTime"
-                    Time="{Binding Task.DueTime, Mode=TwoWay}"
+                    Time="{Binding Task.DueTime}"
                     Grid.Row="5"/>
 
         <TextBlock x:Name="ReminderLabel"
@@ -65,10 +65,10 @@
                    Style="{StaticResource GroupHeaderTextBlockStyle}"
                    Grid.Row="6"/>
         <DatePicker x:Name="ReminderDate"
-                    Date="{Binding Task.ReminderDate, Mode=TwoWay}"
+                    Date="{Binding Task.ReminderDate}"
                     Grid.Row="7"/>
         <TimePicker x:Name="ReminderTime"
-                    Time="{Binding Task.ReminderTime, Mode=TwoWay}"
+                    Time="{Binding Task.ReminderTime}"
                     Grid.Row="8"/>
         <!--Uncomment to see an alignment grid to help ensure your controls are
             aligned on common boundaries.  The image has a top margin of -32px to

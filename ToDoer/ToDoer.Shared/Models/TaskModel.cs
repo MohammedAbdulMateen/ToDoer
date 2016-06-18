@@ -96,7 +96,7 @@
         {
             get
             {
-                return this.ContextId > 0
+                return (this.ContextId > 0 || this.ContextId == Constants.DefaultContextId)
                     && !string.IsNullOrWhiteSpace(this.Context)
                     && !string.IsNullOrWhiteSpace(this.Todo);
             }

@@ -216,18 +216,22 @@
                     task = await this._taskRepository.UpdateTaskAsync(this.Task);
                 }
 
-                this._resetTask();
                 this._navigationService.NavigateTo(Constants.Task, task);
+                this._resetTask();
             }
         }
 
         private void _resetTask()
         {
+            this.Task.ContextId = Constants.DefaultContextId;
+            this.Task.Context = Constants.DefaultContext;
+            this.Task.Id = 0;
             this.Task.Todo = null;
             this.Task.DueDate = null;
             this.Task.DueTime = null;
             this.Task.ReminderDate = null;
-            this._task.ReminderTime = null;
+            this.Task.ReminderTime = null;
+            this.IsTodoNameFocused = false;
         }
 
         #endregion
