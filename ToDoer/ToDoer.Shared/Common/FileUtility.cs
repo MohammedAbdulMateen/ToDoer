@@ -33,7 +33,7 @@
         /// <param name="contents">The contents.</param>
         public static async Task WriteFileAsTextAsync(string filePath, string contents)
         {
-            var storageFile = await GetStorageFile(Constants.ContextDataSource);
+            var storageFile = await GetStorageFile(filePath);
             await FileIO.WriteTextAsync(storageFile, contents);
         }
 

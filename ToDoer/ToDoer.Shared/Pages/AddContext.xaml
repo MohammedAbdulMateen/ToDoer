@@ -27,7 +27,7 @@
                    Style="{StaticResource GroupHeaderTextBlockStyle}"/>
 
         <TextBox x:Name="ContextName"
-                 Text="{Binding Context.Name, Mode=TwoWay}"
+                 Text="{Binding Context.Name,Mode=TwoWay}"
                  common:FocusExtension.IsFocused="{Binding IsContextNameFocused}"
                  Grid.Row="1"/>
         <!--Uncomment to see an alignment grid to help ensure your controls are

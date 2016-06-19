@@ -78,6 +78,28 @@
         public ObservableCollection<ContextModel> Contexts { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected context.
+        /// </summary>
+        /// <value>
+        /// The selected context.
+        /// </value>
+        public ContextModel SelectedContext
+        {
+            get
+            {
+                return this._selectedContext;
+            }
+            set
+            {
+                this.Set(ref this._selectedContext, value);
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        /// <summary>
         /// Gets the context selection changed.
         /// </summary>
         /// <value>
@@ -114,24 +136,6 @@
                 }
 
                 return this._addContext;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the selected context.
-        /// </summary>
-        /// <value>
-        /// The selected context.
-        /// </value>
-        public ContextModel SelectedContext
-        {
-            get
-            {
-                return this._selectedContext;
-            }
-            set
-            {
-                this.Set(ref this._selectedContext, value);
             }
         }
 

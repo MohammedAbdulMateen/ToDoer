@@ -5,12 +5,21 @@
     xmlns:local="using:ToDoer.Pages"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <ListBox ItemsSource="{Binding Tasks}"
-                 ItemTemplate="{StaticResource TaskDataTemplate}"
-                 Padding="24,24"/>
+                 SelectedItem="{Binding SelectedTask,Mode=TwoWay}"
+                 DisplayMemberPath="Todo"
+                 Padding="24,24">
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="SelectionChanged">
+                    <core:InvokeCommandAction Command="{Binding TaskSelectionChanged}"/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </ListBox>
         <!--Uncomment to see an alignment grid to help ensure your controls are
             aligned on common boundaries.  The image has a top margin of -32px to
             account for the System Tray. Set this to 0 (or remove the margin altogether)
@@ -23,7 +32,7 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Icon="Add"
-                          Label="New"
+                          Label="Add Todo"
                           Command="{Binding AddTask}"/>
         </CommandBar>
     </Page.BottomAppBar>

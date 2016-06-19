@@ -13,6 +13,8 @@
     /// </summary>
     public class TaskRepository : ITaskRepository
     {
+        #region Public Methods
+
         /// <summary>
         /// Gets the tasks asynchronous.
         /// </summary>
@@ -74,16 +76,16 @@
         /// </returns>
         public async Task<TaskModel> AddTaskAsync(TaskModel task)
         {
-            var tasks = await _getTasksAsync();
             int id;
-            var last = tasks.LastOrDefault();
-            if (last == null)
+            var tasks = await _getTasksAsync();
+            var lastTask = tasks.LastOrDefault();
+            if (lastTask == null)
             {
                 id = 1;
             }
             else
             {
-                id = last.Id + 1;
+                id = lastTask.Id + 1;
             }
 
             task.Id = id;
@@ -126,6 +128,8 @@
             tasks.Remove(task);
             await _setTasksAsync(tasks);
         }
+
+        #endregion
 
         #region Private Methods
 

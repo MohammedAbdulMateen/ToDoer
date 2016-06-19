@@ -14,6 +14,8 @@
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        #region Constructors
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MainPage"/> class.
         /// </summary>
@@ -23,6 +25,10 @@
             this.NavigationCacheMode = NavigationCacheMode.Required;
             this.DataContext = SimpleIoc.Default.GetInstance<MainViewModel>();
         }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// Invoked when this page is about to be displayed in a Frame.
@@ -78,5 +84,7 @@
             }
         }
 #endif
+
+        #endregion
     }
 }

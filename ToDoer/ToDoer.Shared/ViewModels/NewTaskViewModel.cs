@@ -52,7 +52,7 @@
 
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NewTaskViewModel" /> class.
@@ -63,7 +63,6 @@
         {
             this._navigationService = navigationService;
             this._taskRepository = taskRepository;
-            this.Task = new TaskModel();
         }
 
         #endregion
@@ -105,6 +104,10 @@
                 this.Set(ref this._task, value);
             }
         }
+
+        #endregion
+
+        #region Commands
 
         /// <summary>
         /// Gets or sets the loaded.
@@ -148,7 +151,7 @@
 
         #endregion
 
-        #region Methods
+        #region Public Methods
 
         /// <summary>
         /// Activates the specified parameter.
@@ -156,11 +159,20 @@
         /// <param name="parameter">The parameter.</param>
         public void Activate(object parameter)
         {
-            var contextModel = parameter as ContextModel;
-            if (contextModel != null && contextModel.Id != Constants.DefaultContextId)
+            var task = parameter as TaskModel;
+            if (task != null)
             {
-                this.Task.ContextId = contextModel.Id;
-                this.Task.Context = contextModel.Name;
+                this.Task = task;
+            }
+            else
+            {
+                this.Task = new TaskModel();
+                var contextModel = parameter as ContextModel;
+                if (contextModel != null && contextModel.Id != Constants.DefaultContextId)
+                {
+                    this.Task.ContextId = contextModel.Id;
+                    this.Task.Context = contextModel.Name;
+                }
             }
         }
 
@@ -217,21 +229,7 @@
                 }
 
                 this._navigationService.NavigateTo(Constants.Task, task);
-                this._resetTask();
             }
-        }
-
-        private void _resetTask()
-        {
-            this.Task.ContextId = Constants.DefaultContextId;
-            this.Task.Context = Constants.DefaultContext;
-            this.Task.Id = 0;
-            this.Task.Todo = null;
-            this.Task.DueDate = null;
-            this.Task.DueTime = null;
-            this.Task.ReminderDate = null;
-            this.Task.ReminderTime = null;
-            this.IsTodoNameFocused = false;
         }
 
         #endregion

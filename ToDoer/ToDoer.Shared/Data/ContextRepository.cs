@@ -12,7 +12,7 @@
     /// </summary>
     public class ContextRepository : IContextRepository
     {
-        #region Methods
+        #region Public Methods
 
         /// <summary>
         /// Gets the contexts asynchronous.

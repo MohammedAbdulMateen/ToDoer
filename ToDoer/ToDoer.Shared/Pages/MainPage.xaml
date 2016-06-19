@@ -7,15 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:views="using:ToDoer.Views"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ListBox x:Name="Contexts"
-                 ItemsSource="{Binding Contexts}"
-                 SelectedItem="{Binding SelectedContext, Mode=TwoWay}"
-                 ItemTemplate="{StaticResource ContextDataTemplate}"
+        <ListBox ItemsSource="{Binding Contexts}"
+                 SelectedItem="{Binding SelectedContext,Mode=TwoWay}"
+                 DisplayMemberPath="Name"
                  Padding="24,24">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">
@@ -34,9 +32,8 @@
 
     <Page.BottomAppBar>
         <CommandBar>
-            <AppBarButton x:Name="AddContext" 
-                          Icon="Add" 
-                          Label="Context">
+            <AppBarButton Icon="Add" 
+                          Label="Add List">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:InvokeCommandAction Command="{Binding AddContext}"/>

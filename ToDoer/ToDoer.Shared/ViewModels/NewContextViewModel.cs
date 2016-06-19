@@ -63,7 +63,6 @@
         {
             this._navigationService = navigationService;
             this._contextRepository = contextRepository;
-            this.Context = new ContextModel();
         }
 
         #endregion
@@ -105,6 +104,10 @@
                 this.Set(ref this._isContextNameFocused, value);
             }
         }
+
+        #endregion
+
+        #region Commands
 
         /// <summary>
         /// Gets the save context.
@@ -157,6 +160,8 @@
         /// <exception cref="System.NotImplementedException"></exception>
         public void Activate(object parameter)
         {
+            this.Context = new ContextModel();
+            this.IsContextNameFocused = false;
         }
 
         /// <summary>

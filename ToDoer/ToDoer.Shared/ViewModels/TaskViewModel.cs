@@ -45,9 +45,19 @@
         /// </summary>
         private ICommand _addTask;
 
+        /// <summary>
+        /// The _task selection changed
+        /// </summary>
+        private ICommand _taskSelectionChanged;
+
+        /// <summary>
+        /// The _selected task
+        /// </summary>
+        private TaskModel _selectedTask;
+
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskViewModel" /> class.
@@ -74,6 +84,28 @@
         public ObservableCollection<TaskModel> Tasks { get; set; }
 
         /// <summary>
+        /// Gets or sets the selected task.
+        /// </summary>
+        /// <value>
+        /// The selected task.
+        /// </value>
+        public TaskModel SelectedTask
+        {
+            get
+            {
+                return this._selectedTask;
+            }
+            set
+            {
+                this.Set(ref this._selectedTask, value);
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        /// <summary>
         /// Gets the add task.
         /// </summary>
         /// <value>
@@ -90,6 +122,26 @@
                 }
 
                 return this._addTask;
+            }
+        }
+
+        /// <summary>
+        /// Gets the task selection changed.
+        /// </summary>
+        /// <value>
+        /// The task selection changed.
+        /// </value>
+        [DoNotNotify]
+        public ICommand TaskSelectionChanged
+        {
+            get
+            {
+                if (this._taskSelectionChanged == null)
+                {
+                    this._taskSelectionChanged = new SimpleRelayCommand(this._onTaskSelectionChanged);
+                }
+
+                return this._taskSelectionChanged;
             }
         }
 
@@ -150,6 +202,7 @@
         private async Task _initTasks()
         {
             List<TaskModel> tasks = null;
+            this.Tasks.Clear();
             if (this._currentContext.Id == Constants.DefaultContextId)
             {
                 tasks = await this._getTasksAsync(this._currentContext.Name);
@@ -188,6 +241,11 @@
             return tasks;
         }
 
+        /// <summary>
+        /// _gets the tasks asynchronous.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns></returns>
         private async Task<List<TaskModel>> _getTasksAsync(string context)
         {
             DateTimeOffset? startDate = null, endDate = null;
@@ -221,6 +279,9 @@
             {
                 this.Tasks.Add(task);
             }
+
+            /*
+             * Reason: The item is synchronized by the WinRT
             else
             {
                 item.Todo = task.Todo;
@@ -229,6 +290,18 @@
                 item.ReminderDate = task.ReminderDate;
                 item.ReminderTime = task.ReminderTime;
             }
+            */
+        }
+
+        private void _onTaskSelectionChanged(object parameter)
+        {
+            if (this.SelectedTask == null)
+            {
+                return;
+            }
+
+            this._navigationService.NavigateTo(Constants.AddTask, this.SelectedTask);
+            this.SelectedTask = null;
         }
 
         #endregion
