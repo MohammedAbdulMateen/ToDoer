@@ -10,16 +10,32 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <ListBox ItemsSource="{Binding Tasks}"
-                 SelectedItem="{Binding SelectedTask,Mode=TwoWay}"
-                 DisplayMemberPath="Todo"
-                 Padding="24,24">
+        <ListView x:Name="Tasks"
+                  ItemsSource="{Binding Tasks}"
+                  SelectedItem="{Binding SelectedTask,Mode=TwoWay}"
+                  DisplayMemberPath="Todo"
+                  Padding="24,24">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">
                     <core:InvokeCommandAction Command="{Binding TaskSelectionChanged}"/>
                 </core:EventTriggerBehavior>
             </interactivity:Interaction.Behaviors>
-        </ListBox>
+        </ListView>
+        <TextBlock x:Name="TasksEmptyMsg"
+                   Text="The list is empty"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Visibility="Collapsed"
+                   Style="{StaticResource GroupHeaderTextBlockStyle}">
+            <interactivity:Interaction.Behaviors>
+                <core:DataTriggerBehavior Binding="{Binding ElementName=Tasks, Path=Items.Count}" 
+                                          Value="0">
+                    <core:ChangePropertyAction TargetObject="{Binding ElementName=TasksEmptyMsg}" 
+                                               PropertyName="Visibility" 
+                                               Value="Visible" />
+                </core:DataTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </TextBlock>
         <!--Uncomment to see an alignment grid to help ensure your controls are
             aligned on common boundaries.  The image has a top margin of -32px to
             account for the System Tray. Set this to 0 (or remove the margin altogether)
