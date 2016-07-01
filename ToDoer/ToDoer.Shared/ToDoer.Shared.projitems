@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Common\FileUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\FocusExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\LocalizationService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\OpenMenuFlyoutAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ContextRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\IContextRepository.cs" />

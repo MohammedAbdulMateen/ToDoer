@@ -42,7 +42,7 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Icon="Save" 
-                          Label="Save">
+                          Label="save">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:InvokeCommandAction Command="{Binding SaveContext}"/>

@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ToDoer/ToDoer.WindowsPhone/obj/Debug
+/ToDoer/ToDoer.Windows/bin/Debug
+/ToDoer/ToDoer.WindowsPhone/bin/Debug
+/ToDoer/ToDoer.Windows/obj/Debug

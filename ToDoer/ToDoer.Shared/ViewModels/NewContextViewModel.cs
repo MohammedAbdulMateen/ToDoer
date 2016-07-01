@@ -160,7 +160,16 @@
         /// <exception cref="System.NotImplementedException"></exception>
         public void Activate(object parameter)
         {
-            this.Context = new ContextModel();
+            var context = parameter as ContextModel;
+            if (context == null)
+            {
+                this.Context = new ContextModel();
+            }
+            else
+            {
+                this.Context = context;
+            }
+
             this.IsContextNameFocused = false;
         }
 

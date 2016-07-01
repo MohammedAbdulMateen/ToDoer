@@ -11,10 +11,11 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
-        <ListView ItemsSource="{Binding Contexts}"
-                 SelectedItem="{Binding SelectedContext,Mode=TwoWay}"
-                 DisplayMemberPath="Name"
-                 Padding="24,24">
+        <ListView x:Name="Contexts"
+                  ItemsSource="{Binding Contexts}"
+                  SelectedItem="{Binding SelectedContext,Mode=TwoWay}"
+                  ItemTemplate="{StaticResource ContextItemTemplate}"
+                  Padding="24,24">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">
                     <core:InvokeCommandAction Command="{Binding ContextSelectionChanged}"/>
@@ -33,7 +34,7 @@
     <Page.BottomAppBar>
         <CommandBar>
             <AppBarButton Icon="Add" 
-                          Label="Add List">
+                          Label="add list">
                 <interactivity:Interaction.Behaviors>
                     <core:EventTriggerBehavior EventName="Click">
                         <core:InvokeCommandAction Command="{Binding AddContext}"/>

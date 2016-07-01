@@ -3,6 +3,7 @@
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.Views;
     using PropertyChanged;
+    using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
@@ -15,6 +16,7 @@
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
+    using Windows.UI.Popups;
 
     /// <summary>
     /// The view model for MainPage.xaml.
@@ -34,6 +36,11 @@
         private IContextRepository _contextRepository;
 
         /// <summary>
+        /// The _selected context
+        /// </summary>
+        private ContextModel _selectedContext;
+
+        /// <summary>
         /// The _context selection changed
         /// </summary>
         private ICommand _contextSelectionChanged;
@@ -44,9 +51,14 @@
         private ICommand _addContext;
 
         /// <summary>
-        /// The _selected context
+        /// The _edit context
         /// </summary>
-        private ContextModel _selectedContext;
+        private ICommand _editContext;
+
+        /// <summary>
+        /// The _delete context
+        /// </summary>
+        private ICommand _deleteContext;
 
         #endregion
 
@@ -136,6 +148,46 @@
                 }
 
                 return this._addContext;
+            }
+        }
+
+        /// <summary>
+        /// Gets the edit context.
+        /// </summary>
+        /// <value>
+        /// The edit context.
+        /// </value>
+        [DoNotNotify]
+        public ICommand EditContext
+        {
+            get
+            {
+                if (this._editContext == null)
+                {
+                    this._editContext = new SimpleRelayCommand(this._onEditContext);
+                }
+
+                return this._editContext;
+            }
+        }
+
+        /// <summary>
+        /// Gets the delete context.
+        /// </summary>
+        /// <value>
+        /// The delete context.
+        /// </value>
+        [DoNotNotify]
+        public ICommand DeleteContext
+        {
+            get
+            {
+                if (this._deleteContext == null)
+                {
+                    this._deleteContext = new SimpleRelayCommand(this._onDeleteContext);
+                }
+
+                return this._deleteContext;
             }
         }
 
@@ -246,6 +298,67 @@
         private void _onAddContext(object parameter)
         {
             this._navigationService.NavigateTo(Constants.AddContext);
+        }
+
+        /// <summary>
+        /// _ons the edit context.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        private void _onEditContext(object parameter)
+        {
+            var context = parameter as ContextModel;
+            if (context == null)
+            {
+                return;
+            }
+
+            this._navigationService.NavigateTo(Constants.AddContext, context);
+        }
+
+        /// <summary>
+        /// _ons the delete context.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        private async void _onDeleteContext(object parameter)
+        {
+            var context = parameter as ContextModel;
+            if (context == null)
+            {
+                return;
+            }
+
+            var dialog = new MessageDialog("are you sure you want to delete?", context.Name);
+
+            var delete = new UICommand
+            {
+                Id = context.Id,
+                Invoked = _onDeleteContextConfirmed,
+                Label = "okay"
+            };
+
+            var cancel = new UICommand
+            {
+                Id = context.Id,
+                Invoked = _onDeleteContextAborted,
+                Label = "cancel"
+            };
+
+            dialog.Commands.Add(delete);
+            dialog.Commands.Add(cancel);
+
+            await dialog.ShowAsync();
+        }
+
+        private void _onDeleteContextAborted(IUICommand command)
+        {
+        }
+
+        private async void _onDeleteContextConfirmed(IUICommand command)
+        {
+            var contextId = Convert.ToInt32(command.Id);
+            await this._contextRepository.DeleteContextAsync(contextId);
+            var item = this.Contexts.SingleOrDefault(x => x.Id == contextId);
+            this.Contexts.Remove(item);
         }
 
         #endregion
