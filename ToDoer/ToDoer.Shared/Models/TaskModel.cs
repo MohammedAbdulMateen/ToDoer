@@ -16,7 +16,7 @@
         public TaskModel()
         {
             this.ContextId = Constants.DefaultContextId;
-            this.Context = Constants.DefaultContext;
+            this.Context = LocalizationService.GetLocalizedMessage(Constants.Inbox);
         }
 
         /// <summary>

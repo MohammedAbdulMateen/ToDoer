@@ -22,8 +22,10 @@
             if (senderElement.GetType() == typeof(TextBlock))
             {
                 var textBlock = senderElement as TextBlock;
-                if (textBlock.Text == Constants.DefaultContext || textBlock.Text == "Today" ||
-                    textBlock.Text == "Tomorrow" || textBlock.Text == "Week")
+                if (textBlock.Text == LocalizationService.GetLocalizedMessage(Constants.Inbox) ||
+                    textBlock.Text == LocalizationService.GetLocalizedMessage(Constants.Today) ||
+                    textBlock.Text == LocalizationService.GetLocalizedMessage(Constants.Tomorrow) ||
+                    textBlock.Text == LocalizationService.GetLocalizedMessage(Constants.Week))
                 {
                     return null;
                 }

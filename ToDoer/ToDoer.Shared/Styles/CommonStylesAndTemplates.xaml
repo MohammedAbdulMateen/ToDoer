@@ -30,4 +30,28 @@
         </TextBlock>
     </DataTemplate>
 
+    <DataTemplate x:Key="TasksItemTemplate">
+        <TextBlock Text="{Binding Todo}">
+            <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="delete" 
+                                        Command="{Binding ElementName=Tasks, Path=DataContext.DeleteTask}"
+                                        CommandParameter="{Binding}"/>
+                    </MenuFlyout>
+            </FlyoutBase.AttachedFlyout>
+            
+            <interactivity:Interaction.Behaviors>
+                <core:EventTriggerBehavior EventName="Holding">
+                    <common:OpenMenuFlyoutAction/>
+                </core:EventTriggerBehavior>
+                <core:EventTriggerBehavior EventName="RightTapped">
+                    <common:OpenMenuFlyoutAction/>
+                </core:EventTriggerBehavior>
+            </interactivity:Interaction.Behaviors>
+        </TextBlock>
+    </DataTemplate>
+    
+    <common:ValidationMessageConverter x:Key="ValidationMessageConverter"/>
+    <common:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+
 </ResourceDictionary>

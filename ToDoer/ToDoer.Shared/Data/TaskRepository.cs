@@ -129,6 +129,18 @@
             await _setTasksAsync(tasks);
         }
 
+        /// <summary>
+        /// Deletes the tasks asynchronous belonging to a particular Context.
+        /// </summary>
+        /// <param name="contextId">The context identifier.</param>
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        public async Task DeleteTasksAsync(int contextId)
+        {
+            var tasks = await _getTasksAsync();
+            tasks.RemoveAll(x => x.ContextId == contextId);
+            await _setTasksAsync(tasks);
+        }
+
         #endregion
 
         #region Private Methods

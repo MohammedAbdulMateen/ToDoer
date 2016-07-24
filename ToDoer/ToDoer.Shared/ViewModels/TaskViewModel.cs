@@ -17,6 +17,7 @@
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
+    using Windows.UI.Popups;
 
     /// <summary>
     /// The view model for Task.xaml user control.
@@ -41,6 +42,11 @@
         private ContextModel _currentContext;
 
         /// <summary>
+        /// The _selected task
+        /// </summary>
+        private TaskModel _selectedTask;
+
+        /// <summary>
         /// The _add task
         /// </summary>
         private ICommand _addTask;
@@ -51,9 +57,9 @@
         private ICommand _taskSelectionChanged;
 
         /// <summary>
-        /// The _selected task
+        /// The _delete task
         /// </summary>
-        private TaskModel _selectedTask;
+        private ICommand _deleteTask;
 
         #endregion
 
@@ -145,6 +151,26 @@
             }
         }
 
+        /// <summary>
+        /// Gets the delete task.
+        /// </summary>
+        /// <value>
+        /// The delete task.
+        /// </value>
+        [DoNotNotify]
+        public ICommand DeleteTask
+        {
+            get
+            {
+                if (this._deleteTask == null)
+                {
+                    this._deleteTask = new SimpleRelayCommand(this._onDeleteTask);
+                }
+
+                return this._deleteTask;
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -228,7 +254,7 @@
         }
 
         /// <summary>
-        /// _gets the tasks asynchronous.
+        /// The _get tasks asynchronous.
         /// </summary>
         /// <param name="contextId">The context identifier.</param>
         /// <returns>
@@ -242,10 +268,10 @@
         }
 
         /// <summary>
-        /// _gets the tasks asynchronous.
+        /// The _get tasks asynchronous.
         /// </summary>
         /// <param name="context">The context.</param>
-        /// <returns></returns>
+        /// <returns>A list with the element type of TaskModel <see cref="TaskModel.cs" /></returns>
         private async Task<List<TaskModel>> _getTasksAsync(string context)
         {
             DateTimeOffset? startDate = null, endDate = null;
@@ -281,7 +307,7 @@
             }
 
             /*
-             * Reason: The item is synchronized by the WinRT
+             * Reason: The item is synchronized by the WinRT (through usage of Caching as well)
             else
             {
                 item.Todo = task.Todo;
@@ -293,6 +319,10 @@
             */
         }
 
+        /// <summary>
+        /// The _on task selection changed.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
         private void _onTaskSelectionChanged(object parameter)
         {
             if (this.SelectedTask == null)
@@ -302,6 +332,60 @@
 
             this._navigationService.NavigateTo(Constants.AddTask, this.SelectedTask);
             this.SelectedTask = null;
+        }
+
+        /// <summary>
+        /// The _on delete task.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        private async void _onDeleteTask(object parameter)
+        {
+            var task = parameter as TaskModel;
+            if (task == null)
+            {
+                return;
+            }
+
+            var dialog = new MessageDialog(LocalizationService.GetLocalizedMessage(Constants.DeletePrompt), task.Todo);
+
+            var delete = new UICommand
+            {
+                Id = task.Id,
+                Invoked = _onDeleteTaskConfirmed,
+                Label = LocalizationService.GetLocalizedMessage(Constants.Okay)
+            };
+
+            var cancel = new UICommand
+            {
+                Id = task.Id,
+                Invoked = _onDeleteTaskAborted,
+                Label = LocalizationService.GetLocalizedMessage(Constants.Cancel)
+            };
+
+            dialog.Commands.Add(delete);
+            dialog.Commands.Add(cancel);
+
+            await dialog.ShowAsync();
+        }
+
+        /// <summary>
+        /// The _on delete task aborted.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        private void _onDeleteTaskAborted(IUICommand command)
+        {
+        }
+
+        /// <summary>
+        /// The _on delete task confirmed.
+        /// </summary>
+        /// <param name="command">The command.</param>
+        private async void _onDeleteTaskConfirmed(IUICommand command)
+        {
+            var taskId = Convert.ToInt32(command.Id);
+            await this._taskRepository.DeleteTaskAsync(taskId);
+            var item = this.Tasks.SingleOrDefault(x => x.Id == taskId);
+            this.Tasks.Remove(item);
         }
 
         #endregion

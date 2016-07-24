@@ -36,6 +36,11 @@
         private IContextRepository _contextRepository;
 
         /// <summary>
+        /// The _task repository
+        /// </summary>
+        private ITaskRepository _taskRepository;
+
+        /// <summary>
         /// The _selected context
         /// </summary>
         private ContextModel _selectedContext;
@@ -69,10 +74,11 @@
         /// </summary>
         /// <param name="navigationService">The navigation service.</param>
         /// <param name="contextRepository">The context repository.</param>
-        public MainViewModel(INavigationService navigationService, IContextRepository contextRepository)
+        public MainViewModel(INavigationService navigationService, IContextRepository contextRepository, ITaskRepository taskRepository)
         {
             this._navigationService = navigationService;
             this._contextRepository = contextRepository;
+            this._taskRepository = taskRepository;
             this.Contexts = new ObservableCollection<ContextModel>();
             this._initContexts();
         }
@@ -301,7 +307,7 @@
         }
 
         /// <summary>
-        /// _ons the edit context.
+        /// The _on edit context.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         private void _onEditContext(object parameter)
@@ -316,7 +322,7 @@
         }
 
         /// <summary>
-        /// _ons the delete context.
+        /// The _on delete context.
         /// </summary>
         /// <param name="parameter">The parameter.</param>
         private async void _onDeleteContext(object parameter)
@@ -327,20 +333,20 @@
                 return;
             }
 
-            var dialog = new MessageDialog("are you sure you want to delete?", context.Name);
+            var dialog = new MessageDialog(LocalizationService.GetLocalizedMessage(Constants.DeletePrompt), context.Name);
 
             var delete = new UICommand
             {
                 Id = context.Id,
                 Invoked = _onDeleteContextConfirmed,
-                Label = "okay"
+                Label = LocalizationService.GetLocalizedMessage(Constants.Okay)
             };
 
             var cancel = new UICommand
             {
                 Id = context.Id,
                 Invoked = _onDeleteContextAborted,
-                Label = "cancel"
+                Label = LocalizationService.GetLocalizedMessage(Constants.Cancel)
             };
 
             dialog.Commands.Add(delete);
@@ -349,14 +355,23 @@
             await dialog.ShowAsync();
         }
 
+        /// <summary>
+        /// The _on delete context aborted.
+        /// </summary>
+        /// <param name="command">The command.</param>
         private void _onDeleteContextAborted(IUICommand command)
         {
         }
 
+        /// <summary>
+        /// The _on delete context confirmed.
+        /// </summary>
+        /// <param name="command">The command.</param>
         private async void _onDeleteContextConfirmed(IUICommand command)
         {
             var contextId = Convert.ToInt32(command.Id);
             await this._contextRepository.DeleteContextAsync(contextId);
+            await this._taskRepository.DeleteTasksAsync(contextId);
             var item = this.Contexts.SingleOrDefault(x => x.Id == contextId);
             this.Contexts.Remove(item);
         }

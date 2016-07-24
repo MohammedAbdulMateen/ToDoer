@@ -60,5 +60,12 @@
         /// <param name="id">The identifier.</param>
         /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
         Task DeleteTaskAsync(int id);
+
+        /// <summary>
+        /// Deletes the tasks asynchronous belonging to a particular Context.
+        /// </summary>
+        /// <param name="contextId">The context identifier.</param>
+        /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
+        Task DeleteTasksAsync(int contextId);
     }
 }

@@ -163,7 +163,7 @@
             var context = parameter as ContextModel;
             if (context == null)
             {
-                this.Context = new ContextModel();
+                this.Context = new ContextModel(true);
             }
             else
             {
@@ -201,20 +201,23 @@
         /// <param name="parameter">The parameter.</param>
         public async void OnSaveContext(object parameter)
         {
-            if (this.Context.IsValid)
+            this.Context.Validate();
+            if (this.Context.HasValidationMessageType<ValidationErrorMessage>())
             {
-                ContextModel context = null;
-                if (this.Context.Id == 0)
-                {
-                    context = await this._contextRepository.AddContextAsync(this.Context);
-                }
-                else
-                {
-                    context = await this._contextRepository.UpdateContextAsync(this.Context);
-                }
-
-                this._navigationService.NavigateTo(Constants.MainPage, context);
+                return;
             }
+
+            ContextModel context = null;
+            if (this.Context.Id == 0)
+            {
+                context = await this._contextRepository.AddContextAsync(this.Context);
+            }
+            else
+            {
+                context = await this._contextRepository.UpdateContextAsync(this.Context);
+            }
+
+            this._navigationService.NavigateTo(Constants.MainPage, context);
         }
 
         #endregion

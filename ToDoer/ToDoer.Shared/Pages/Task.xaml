@@ -13,7 +13,7 @@
         <ListView x:Name="Tasks"
                   ItemsSource="{Binding Tasks}"
                   SelectedItem="{Binding SelectedTask,Mode=TwoWay}"
-                  DisplayMemberPath="Todo"
+                  ItemTemplate="{StaticResource TasksItemTemplate}"
                   Padding="24,24">
             <interactivity:Interaction.Behaviors>
                 <core:EventTriggerBehavior EventName="SelectionChanged">
@@ -28,11 +28,11 @@
                    Visibility="Collapsed"
                    Style="{StaticResource GroupHeaderTextBlockStyle}">
             <interactivity:Interaction.Behaviors>
-                <core:DataTriggerBehavior Binding="{Binding ElementName=Tasks, Path=Items.Count}" 
+                <core:DataTriggerBehavior Binding="{Binding ElementName=Tasks,Path=Items.Count}" 
                                           Value="0">
                     <core:ChangePropertyAction TargetObject="{Binding ElementName=TasksEmptyMsg}" 
                                                PropertyName="Visibility" 
-                                               Value="Visible" />
+                                               Value="Visible"/>
                 </core:DataTriggerBehavior>
             </interactivity:Interaction.Behaviors>
         </TextBlock>
