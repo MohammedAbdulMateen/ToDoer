@@ -8,7 +8,7 @@
     /// The task model
     /// </summary>
     [ImplementPropertyChanged]
-    public class TaskModel
+    public class TaskModel : ValidationBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="TaskModel"/> class.
@@ -86,19 +86,13 @@
         public TimeSpan? ReminderTime { get; set; }
 
         /// <summary>
-        /// Returns true if ... is valid.
+        /// Validates the self.
         /// </summary>
-        /// <value>
-        ///   <c>true</c> if this instance is valid; otherwise, <c>false</c>.
-        /// </value>
-        [DoNotNotify]
-        public bool IsValid
+        protected override void ValidateSelf()
         {
-            get
+            if (string.IsNullOrWhiteSpace(this.Todo))
             {
-                return (this.ContextId > 0 || this.ContextId == Constants.DefaultContextId)
-                    && !string.IsNullOrWhiteSpace(this.Context)
-                    && !string.IsNullOrWhiteSpace(this.Todo);
+                this.ValidationErrors[Constants.Todo] = Constants.TodoEmptyError;
             }
         }
     }

@@ -51,7 +51,7 @@
         </TextBlock>
     </DataTemplate>
     
-    <common:ValidationMessageConverter x:Key="ValidationMessageConverter"/>
     <common:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    <common:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
 </ResourceDictionary>

@@ -16,16 +16,15 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Commands\SimpleRelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\FileUtility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\FocusExtension.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\LocalizationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\OpenMenuFlyoutAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\StringToVisibilityConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidatableBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidationErrorMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidationMessageConverter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidationWarningMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidationBase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Common\ValidationErrors.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Common\ViewModelLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\ContextRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Data\IContextRepository.cs" />

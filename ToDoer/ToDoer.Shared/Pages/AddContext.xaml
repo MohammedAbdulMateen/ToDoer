@@ -8,7 +8,9 @@
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:common="using:ToDoer.Common"
-    mc:Ignorable="d">
+    xmlns:win="condition:WINDOWS_APP"
+    xmlns:wp="condition:WINDOWS_PHONE_APP"
+    mc:Ignorable="d win wp">
     <interactivity:Interaction.Behaviors>
         <core:EventTriggerBehavior EventName="Loaded">
             <core:InvokeCommandAction Command="{Binding Loaded}"/>
@@ -23,22 +25,26 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="ContextNameLabel"
-                   Text="Context Name"
-                   Style="{StaticResource GroupHeaderTextBlockStyle}"/>
+        <win:TextBlock x:Name="ContextNameLabel"
+                       Text="Context Name"
+                       FontSize="24"/>
+
+        <wp:TextBlock x:Name="ContextNameLabel"
+                      Text="Context Name"
+                      Style="{StaticResource GroupHeaderTextBlockStyle}"/>
 
         <TextBox x:Name="ContextName"
                  Text="{Binding Context.Name,Mode=TwoWay}"
                  common:FocusExtension.IsFocused="{Binding IsContextNameFocused}"
                  Grid.Row="1"/>
-        
+
         <TextBlock x:Name="ContextNameValidationMessage" 
-                   Text="{Binding Context.ValidationMessages[Name],Converter={StaticResource ValidationMessageConverter}}"
+                   Text="{Binding Context.ValidationErrors[Name]}"
                    Visibility="{Binding RelativeSource={RelativeSource Self},Path=Text,Converter={StaticResource StringToVisibilityConverter}}"
                    Style="{StaticResource BaseTextBlockStyle}"
                    Foreground="Red"
                    Grid.Row="2"/>
-        
+
         <!--Uncomment to see an alignment grid to help ensure your controls are
             aligned on common boundaries.  The image has a top margin of -32px to
             account for the System Tray. Set this to 0 (or remove the margin altogether)

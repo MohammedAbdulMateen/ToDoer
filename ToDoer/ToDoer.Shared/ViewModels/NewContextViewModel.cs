@@ -163,7 +163,7 @@
             var context = parameter as ContextModel;
             if (context == null)
             {
-                this.Context = new ContextModel(true);
+                this.Context = new ContextModel();
             }
             else
             {
@@ -202,7 +202,7 @@
         public async void OnSaveContext(object parameter)
         {
             this.Context.Validate();
-            if (this.Context.HasValidationMessageType<ValidationErrorMessage>())
+            if (!this.Context.IsValid)
             {
                 return;
             }

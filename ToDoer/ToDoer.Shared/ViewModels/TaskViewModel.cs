@@ -61,6 +61,11 @@
         /// </summary>
         private ICommand _deleteTask;
 
+        /// <summary>
+        /// The are tasks empty.
+        /// </summary>
+        private bool _areTasksEmpty;
+
         #endregion
 
         #region Constructors
@@ -104,6 +109,21 @@
             set
             {
                 this.Set(ref this._selectedTask, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the are tasks empty.
+        /// </summary>
+        public bool AreTasksEmpty
+        {
+            get
+            {
+                return this._areTasksEmpty;
+            }
+            set
+            {
+                this.Set(ref this._areTasksEmpty, value);
             }
         }
 
@@ -241,6 +261,15 @@
             for (int i = 0; i < tasks.Count; i++)
             {
                 this.Tasks.Add(tasks[i]);
+            }
+
+            if (this.Tasks.Any())
+            {
+                this.AreTasksEmpty = false;
+            }
+            else
+            {
+                this.AreTasksEmpty = true;
             }
         }
 

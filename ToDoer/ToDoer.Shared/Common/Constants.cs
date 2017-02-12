@@ -72,6 +72,11 @@
         /// </summary>
         public const string TaskDataSource = "App_Data\\tasks.json";
 
+        /// <summary>
+        /// The text
+        /// </summary>
+        public const string Text = "text";
+
         #endregion
 
         #region Messages
@@ -91,14 +96,34 @@
         /// </summary>
         public const string DeletePrompt = "DeletePrompt";
 
+        /// <summary>
+        /// To doer reminder
+        /// </summary>
+        public const string ToDoerReminder = "ToDoer - Reminder";
+
         #endregion
 
         #region Validation Properties
 
         /// <summary>
+        /// Returns true if ... is valid.
+        /// </summary>
+        public const string IsValid = "IsValid";
+
+        /// <summary>
+        /// The validation errors
+        /// </summary>
+        public const string ValidationErrors = "ValidationErrors";
+
+        /// <summary>
         /// The context name property
         /// </summary>
         public const string ContextNameProperty = "Name";
+
+        /// <summary>
+        /// The todo
+        /// </summary>
+        public const string Todo = "Todo";
 
         #endregion
 
@@ -108,6 +133,11 @@
         /// The context name empty error
         /// </summary>
         public const string ContextNameEmptyError = "Context Name cannot be blank.";
+
+        /// <summary>
+        /// The todo empty error
+        /// </summary>
+        public const string TodoEmptyError = "Todo cannot be blank.";
 
         #endregion
     }

@@ -9,6 +9,9 @@
     using ToDoer.Data;
     using ToDoer.Interfaces;
     using ToDoer.Models;
+    using Windows.UI.Notifications;
+    using System;
+    using Windows.Data.Xml.Dom;
 #if WINDOWS_PHONE_APP
     using Windows.Phone.UI.Input;
 #endif
@@ -149,6 +152,36 @@
             }
         }
 
+        /// <summary>
+        /// Gets the on set due date toggle.
+        /// </summary>
+        /// <value>
+        /// The on set due date toggle.
+        /// </value>
+        [DoNotNotify]
+        public ICommand OnSetDueDateToggle
+        {
+            get
+            {
+                return new SimpleRelayCommand(this._onSetDueDateToggle);
+            }
+        }
+
+        /// <summary>
+        /// Gets the on set reminder toggle.
+        /// </summary>
+        /// <value>
+        /// The on set reminder toggle.
+        /// </value>
+        [DoNotNotify]
+        public ICommand OnSetReminderToggle
+        {
+            get
+            {
+                return new SimpleRelayCommand(this._onSetReminderToggle);
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -216,19 +249,88 @@
         /// <returns>An instance of Task <see cref="System.Threading.Tasks.Task.cs"/></returns>
         private async void _onSaveTask(object parameter)
         {
-            if (this.Task.IsValid)
+            this.Task.Validate();
+            if (!this.Task.IsValid)
             {
-                TaskModel task = null;
-                if (this.Task.Id == 0)
-                {
-                    task = await this._taskRepository.AddTaskAsync(this.Task);
-                }
-                else
-                {
-                    task = await this._taskRepository.UpdateTaskAsync(this.Task);
-                }
+                return;
+            }
 
-                this._navigationService.NavigateTo(Constants.Task, task);
+            TaskModel task = null;
+            if (this.Task.Id == 0)
+            {
+                task = await this._taskRepository.AddTaskAsync(this.Task);
+            }
+            else
+            {
+                task = await this._taskRepository.UpdateTaskAsync(this.Task);
+            }
+
+            if (this.Task.ReminderDate.HasValue && this.Task.ReminderTime.HasValue)
+            {
+                //var localTime = new DateTime(
+                //    this.Task.ReminderDate.Value.Year,
+                //    this.Task.ReminderDate.Value.Month,
+                //    this.Task.ReminderDate.Value.Day,
+                //    this.Task.ReminderTime.Value.Hours,
+                //    this.Task.ReminderTime.Value.Minutes,
+                //    this.Task.ReminderTime.Value.Seconds);
+                //var dateAndOffset = new DateTimeOffset(localTime,
+                //                         TimeZoneInfo.Local.GetUtcOffset(localTime));
+                var dateAndOffset = new DateTimeOffset(this.Task.ReminderDate.Value.Year,
+                    this.Task.ReminderDate.Value.Month,
+                    this.Task.ReminderDate.Value.Day,
+                    this.Task.ReminderTime.Value.Hours,
+                    this.Task.ReminderTime.Value.Minutes,
+                    this.Task.ReminderTime.Value.Seconds, new TimeSpan(1, 0, 0));
+                // var reminder = new DateTimeOffset(this.Task.ReminderDate.Value.Date, this.Task.ReminderTime.Value);
+
+                var toastNotifier = ToastNotificationManager.CreateToastNotifier();
+                var toastXml = ToastNotificationManager.GetTemplateContent(ToastTemplateType.ToastText02);
+                var toastTextElements = toastXml.GetElementsByTagName(Constants.Text);
+
+                toastTextElements.Item(0).AppendChild(toastXml.CreateTextNode(Constants.ToDoerReminder));
+                toastTextElements.Item(1).AppendChild(toastXml.CreateTextNode(this.Task.Todo));
+
+                var scheduledToast = new ScheduledToastNotification(toastXml, dateAndOffset);
+                toastNotifier.AddToSchedule(scheduledToast);
+            }
+
+            this._navigationService.NavigateTo(Constants.Task, task);
+        }
+
+        /// <summary>
+        /// Ons the set due date toggle.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        private void _onSetDueDateToggle(object parameter)
+        {
+            if (Convert.ToBoolean(parameter))
+            {
+                this.Task.DueDate = DateTimeOffset.Now;
+                this.Task.DueTime = DateTimeOffset.Now.TimeOfDay;
+            }
+            else
+            {
+                this.Task.DueDate = null;
+                this.Task.DueTime = null;
+            }
+        }
+
+        /// <summary>
+        /// Ons the set reminder toggle.
+        /// </summary>
+        /// <param name="parameter">The parameter.</param>
+        private void _onSetReminderToggle(object parameter)
+        {
+            if (Convert.ToBoolean(parameter))
+            {
+                this.Task.ReminderDate = DateTimeOffset.Now;
+                this.Task.ReminderTime = DateTimeOffset.Now.TimeOfDay;
+            }
+            else
+            {
+                this.Task.ReminderDate = null;
+                this.Task.ReminderTime = null;
             }
         }
 

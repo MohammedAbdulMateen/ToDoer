@@ -1,15 +1,13 @@
 ﻿namespace ToDoer.Common
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using ToDoer.Interfaces;
+    using Windows.UI.Xaml;
     using Windows.UI.Xaml.Data;
 
     /// <summary>
-    /// A value converter to convert IValidationMessage to string
+    /// The bool to Visibility converter
     /// </summary>
-    public class ValidationMessageConverter : IValueConverter
+    public class BooleanToVisibilityConverter : IValueConverter
     {
         /// <summary>
         /// Converts the specified value.
@@ -18,21 +16,17 @@
         /// <param name="targetType">Type of the target.</param>
         /// <param name="parameter">The parameter.</param>
         /// <param name="language">The language.</param>
-        /// <returns>A validation message</returns>
+        /// <returns>A enum of type Visibility</returns>
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            if (!(value is IEnumerable<IValidationMessage>))
+            if ((bool)value)
             {
-                return string.Empty;
+                return Visibility.Visible;
             }
-
-            var collection = value as IEnumerable<IValidationMessage>;
-            if (!collection.Any())
+            else
             {
-                return string.Empty;
+                return Visibility.Collapsed;
             }
-
-            return collection.FirstOrDefault().Message;
         }
 
         /// <summary>
@@ -42,11 +36,11 @@
         /// <param name="targetType">Type of the target.</param>
         /// <param name="parameter">The parameter.</param>
         /// <param name="language">The language.</param>
-        /// <returns>An instance of an object</returns>
-        /// <exception cref="NotImplementedException"></exception>
+        /// <returns>An instance of object</returns>
+        /// <exception cref="System.NotImplementedException"></exception>
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            throw new System.NotImplementedException();
         }
     }
 }
